@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 public class ShopService {
@@ -20,5 +21,12 @@ public class ShopService {
         Order newOrder = new Order(UUID.randomUUID().toString(), products, OrderStatus.PROCESSING);
 
         return orderRepo.addOrder(newOrder);
+    }
+
+    public List<Order> findOrders(OrderStatus orderStatus) {
+        return orderRepo.getOrders()
+                .stream()
+                .filter(order -> Objects.equals(order.orderStatus(), orderStatus))
+                .toList();
     }
 }

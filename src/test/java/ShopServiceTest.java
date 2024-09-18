@@ -33,4 +33,30 @@ class ShopServiceTest {
         //THEN
         assertNull(actual);
     }
+
+    @Test
+    void findOrders_whenStatusProcessing_expect3Orders() {
+        ShopService shopService = new ShopService();
+        List<String> productsIds = List.of("1");
+        shopService.addOrder(productsIds);
+        shopService.addOrder(productsIds);
+        shopService.addOrder(productsIds);
+
+        List<Order> result = shopService.findOrders(OrderStatus.PROCESSING);
+        assertEquals(3, result.size());
+
+    }
+
+    @Test
+    void findOrders_whenStatusCompleted_expect0Orders() {
+        ShopService shopService = new ShopService();
+        List<String> productsIds = List.of("1");
+        shopService.addOrder(productsIds);
+        shopService.addOrder(productsIds);
+        shopService.addOrder(productsIds);
+
+        List<Order> result = shopService.findOrders(OrderStatus.COMPLETED);
+        assertEquals(0, result.size());
+
+    }
 }
