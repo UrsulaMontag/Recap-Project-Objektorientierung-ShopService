@@ -37,7 +37,7 @@ class OrderMapRepoTest {
         repo.addOrder(newOrder);
 
         //WHEN
-        Order actual = repo.getOrderById("1");
+        Order actual = repo.getOrderById("1").orElseThrow();
 
         //THEN
         Product product1 = new Product("1", "Apfel");
@@ -60,7 +60,7 @@ class OrderMapRepoTest {
         Product product1 = new Product("1", "Apfel");
         Order expected = new Order("1", List.of(product1), OrderStatus.PROCESSING);
         assertEquals(actual, expected);
-        assertEquals(repo.getOrderById("1"), expected);
+        assertEquals(repo.getOrderById("1").orElseThrow(), expected);
     }
 
     @Test
@@ -72,6 +72,6 @@ class OrderMapRepoTest {
         repo.removeOrder("1");
 
         //THEN
-        assertNull(repo.getOrderById("1"));
+        assertTrue(repo.getOrderById("1").isEmpty());
     }
 }
