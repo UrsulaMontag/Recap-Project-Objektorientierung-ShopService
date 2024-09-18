@@ -7,12 +7,9 @@ public class ShopService {
     public Order addOrder(List<String> productIds) {
         List<Product> products = new ArrayList<>();
         for (String productId : productIds) {
-            Optional<Product> productToOrder = productRepo.getProductById(productId);
-            if (productToOrder.isEmpty()) {
-                System.out.println("Product mit der Id: " + productId + " konnte nicht bestellt werden!");
-                return null;
-            }
-            products.add(productToOrder.get());
+            Product productToOrder = productRepo.getProductById(productId).orElseThrow(() -> new NoSuchElementException("Product not found: " + productId));
+
+            products.add(productToOrder);
         }
 
         Order newOrder = new Order(UUID.randomUUID().toString(), products, OrderStatus.PROCESSING);
