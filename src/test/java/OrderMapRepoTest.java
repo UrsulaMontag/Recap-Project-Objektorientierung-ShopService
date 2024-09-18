@@ -25,7 +25,13 @@ class OrderMapRepoTest {
         Product product1 = new Product("1", "Apfel");
         expected.add(new Order("1", List.of(product1), OrderStatus.PROCESSING));
 
-        assertEquals(actual, expected);
+        assertThat(actual)
+                // compare while ignoring timestamps
+                .usingRecursiveComparison()
+                .ignoringFields("timestamp")
+                .ignoringAllOverriddenEquals()
+
+                .isEqualTo(expected);
     }
 
     @Test
@@ -44,7 +50,13 @@ class OrderMapRepoTest {
         Product product1 = new Product("1", "Apfel");
         Order expected = new Order("1", List.of(product1), OrderStatus.PROCESSING);
 
-        assertEquals(actual, expected);
+        assertThat(actual)
+                // compare while ignoring timestamps
+                .usingRecursiveComparison()
+                .ignoringFields("timestamp")
+                .ignoringAllOverriddenEquals()
+
+                .isEqualTo(expected);
     }
 
     @Test

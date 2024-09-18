@@ -33,4 +33,21 @@ public class ShopService {
         orderRepo.removeOrder(orderToUpdate.id());
         orderRepo.addOrder(orderToUpdate.withOrderStatus(orderStatus));
     }
+
+    public Map<OrderStatus, Order> getOldestOrderPerStatus() {
+        List<Order> orders = orderRepo.getOrders();
+        Map<OrderStatus, Order> oldestOrdersPerStatus = new HashMap<>();
+
+        for (Order order : orders) {
+            OrderStatus status = order.orderStatus();
+            Order currentOldest = oldestOrdersPerStatus.get(status);
+
+            if (currentOldest == null || order.timestamp().isBefore(currentOldest.timestamp())) {
+                oldestOrdersPerStatus.put(status, order);
+            }
+        }
+
+        return oldestOrdersPerStatus;
+    }
+
 }
