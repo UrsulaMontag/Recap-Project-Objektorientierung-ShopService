@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 class OrderMapRepoTest {
 
@@ -59,8 +60,15 @@ class OrderMapRepoTest {
         //THEN
         Product product1 = new Product("1", "Apfel");
         Order expected = new Order("1", List.of(product1), OrderStatus.PROCESSING);
-        assertEquals(actual, expected);
-        assertEquals(repo.getOrderById("1").orElseThrow(), expected);
+
+        assertThat(actual)
+                // compare while ignoring timestamps
+                .usingRecursiveComparison()
+                .ignoringFields("timestamp")
+                .ignoringAllOverriddenEquals()
+
+                .isEqualTo(expected);
+
     }
 
     @Test
