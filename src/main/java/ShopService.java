@@ -1,8 +1,11 @@
+import lombok.RequiredArgsConstructor;
+
 import java.util.*;
 
+@RequiredArgsConstructor
 public class ShopService {
-    private final ProductRepo productRepo = new ProductRepo();
-    private final OrderRepo orderRepo = new OrderMapRepo();
+    private final ProductRepo productRepo;
+    private final OrderRepo orderRepo;
 
     public Order addOrder(List<String> productIds) {
         List<Product> products = new ArrayList<>();
@@ -22,5 +25,11 @@ public class ShopService {
                 .stream()
                 .filter(order -> Objects.equals(order.orderStatus(), orderStatus))
                 .toList();
+    }
+
+    public void updateOrder(String id, OrderStatus orderStatus) {
+        Order orderToUpdate = orderRepo.getOrderById(id).orElseThrow(() -> new NoSuchElementException("Order with id: " + id + " does not exist."));
+        orderRepo.removeOrder(orderToUpdate.id());
+        orderRepo.addOrder(orderToUpdate.withOrderStatus(orderStatus));
     }
 }

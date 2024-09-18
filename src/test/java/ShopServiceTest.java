@@ -1,3 +1,4 @@
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -6,11 +7,18 @@ import java.util.NoSuchElementException;
 import static org.junit.jupiter.api.Assertions.*;
 
 class ShopServiceTest {
+    private static ShopService shopService;
+
+    @BeforeEach
+    void setup() {
+        ProductRepo productRepo = new ProductRepo();
+        OrderRepo orderRepo = new OrderMapRepo();
+        shopService = new ShopService(productRepo, orderRepo);
+    }
 
     @Test
     void addOrderTest() {
         //GIVEN
-        ShopService shopService = new ShopService();
         List<String> productsIds = List.of("1");
 
         //WHEN
@@ -25,7 +33,6 @@ class ShopServiceTest {
     @Test
     void addOrderTest_whenInvalidProductId_expectNoSuchElementException() {
         //GIVEN
-        ShopService shopService = new ShopService();
         List<String> productsIds = List.of("1", "2");
 
         // When - Then
@@ -35,7 +42,6 @@ class ShopServiceTest {
 
     @Test
     void findOrders_whenStatusProcessing_expect3Orders() {
-        ShopService shopService = new ShopService();
         List<String> productsIds = List.of("1");
         shopService.addOrder(productsIds);
         shopService.addOrder(productsIds);
@@ -48,7 +54,6 @@ class ShopServiceTest {
 
     @Test
     void findOrders_whenStatusCompleted_expect0Orders() {
-        ShopService shopService = new ShopService();
         List<String> productsIds = List.of("1");
         shopService.addOrder(productsIds);
         shopService.addOrder(productsIds);
@@ -57,5 +62,27 @@ class ShopServiceTest {
         List<Order> result = shopService.findOrders(OrderStatus.COMPLETED);
         assertEquals(0, result.size());
 
+    }
+
+    @Test
+    void updateOrder_whenIdAndStatusGiven_expectOrderWithIdAndUpdatedStatus() {
+        // Given
+        List<String> productsIds = List.of("1");
+        Order order = shopService.addOrder(productsIds);
+
+        // When
+        shopService.updateOrder(order.id(), OrderStatus.COMPLETED);
+
+        // Then
+        List<Order> processingOrders = shopService.findOrders(OrderStatus.PROCESSING);
+        assertEquals(0, processingOrders.size());
+        List<Order> completedOrders = shopService.findOrders(OrderStatus.COMPLETED);
+        assertEquals(1, completedOrders.size());
+
+    }
+
+    @Test
+    void updateOrder_whenWrongIdAndStatusGiven_expectNoSuchElementException() {
+        assertThrows(NoSuchElementException.class, () -> shopService.updateOrder("-1", OrderStatus.COMPLETED));
     }
 }
