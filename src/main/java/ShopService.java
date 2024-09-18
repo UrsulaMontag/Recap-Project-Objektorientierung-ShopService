@@ -1,5 +1,6 @@
 import lombok.RequiredArgsConstructor;
 
+import java.time.Instant;
 import java.util.*;
 
 @RequiredArgsConstructor
@@ -15,7 +16,7 @@ public class ShopService {
             products.add(productToOrder);
         }
 
-        Order newOrder = new Order(UUID.randomUUID().toString(), products, OrderStatus.PROCESSING);
+        Order newOrder = new Order(UUID.randomUUID().toString(), products, OrderStatus.PROCESSING, Instant.now());
 
         return orderRepo.addOrder(newOrder);
     }
